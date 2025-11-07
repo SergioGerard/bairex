@@ -1,0 +1,62 @@
+# Cuándo usar Skeletons en Next.js (con Hydration)
+
+## ❌ No usar Skeleton antes de la hidratación si:
+
+- El contenido ya está renderizado en el HTML del servidor.
+- Usás `getStaticProps` o `getServerSideProps` para generar el contenido.
+- Mostrar un skeleton mientras ya hay contenido puede causar un "parpadeo": primero aparece el contenido real, luego desaparece (por el skeleton), y luego vuelve a aparecer.
+
+## ✅ Usar Skeleton solo cuando:
+
+- El contenido depende del cliente y no está en el HTML inicial.
+- Usás datos que vienen con `useEffect`, `useState` o `fetch` del lado del cliente.
+- Ejemplo: mostrar datos del usuario autenticado que no se pueden conocer en el servidor.
+
+---
+
+## ✅ Ejemplo práctico: detectar si está hidratado
+
+### 1. Hook para detectar si el componente ya está hidratado
+
+```tsx
+import { useEffect, useState } from "react";
+
+function useHydration() {
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
+
+  return hydrated;
+}
+2. Usar en un componente
+tsx
+Copiar
+Editar
+export default function MiComponente() {
+  const hydrated = useHydration();
+
+  if (!hydrated) {
+    return <Skeleton />; // mientras no está hidratado
+  }
+
+  return <ContenidoReal />; // después de la hidratación
+}
+✅ Alternativa rápida sin hook:
+tsx
+Copiar
+Editar
+const isHydrated = typeof window !== 'undefined';
+
+return (
+  <>
+    {!isHydrated ? <Skeleton /> : <ContenidoReal />}
+  </>
+);
+🧠 Resumen
+Skeleton solo cuando esperás que el contenido no esté disponible antes de la hidratación.
+
+Evitá parpadeos innecesarios que confundan al usuario.
+
+Hidratación = React conectando el HTML ya renderizado con el JavaScript del cliente.

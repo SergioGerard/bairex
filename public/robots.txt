@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Allow: /nosotros
+Allow: /desarrollo/
+
+# Disallow dashboard pages (private user data)
+Disallow: /dashboard/
+
+# Sitemap
+Sitemap: https://bairex.com.ar/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
